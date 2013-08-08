@@ -76,6 +76,8 @@ public final class Connection implements Closeable {
   private static final byte[] HTTP_11 = new byte[] {
       'h', 't', 't', 'p', '/', '1', '.', '1'
   };
+  
+  private static byte[] protocol = HTTP_11;
 
   private final Route route;
 
@@ -154,16 +156,24 @@ public final class Connection implements Closeable {
     in = sslSocket.getInputStream();
 
     byte[] selectedProtocol;
-    if (useNpn && (selectedProtocol = platform.getNpnSelectedProtocol(sslSocket)) != null) {
+    selectedProtocol = protocol;
+//    if (useNpn && (selectedProtocol = platform.getNpnSelectedProtocol(sslSocket)) != null) {
+    if (useNpn && selectedProtocol != null) {
       if (Arrays.equals(selectedProtocol, SPDY3)) {
         sslSocket.setSoTimeout(0); // SPDY timeouts are set per-stream.
         spdyConnection = new SpdyConnection.Builder(route.address.getUriHost(), true, in, out)
             .build();
+//        OkHttpClient.usesSPDY = true;
+        System.out.println("THIS IS A SPDY CONNECTION"); //DELETE AFTER DEBUGGING
       } else if (!Arrays.equals(selectedProtocol, HTTP_11)) {
         throw new IOException(
             "Unexpected NPN transport " + new String(selectedProtocol, "ISO-8859-1"));
-      }
+      } else 	System.out.println("THIS IS AN HTTP CONNECTION"); //DELETE AFTER DEBUGGING
     }
+  }
+  
+  public static void forceSPDY(){
+	  protocol = SPDY3;
   }
 
   /** Returns true if {@link #connect} has been attempted on this connection. */

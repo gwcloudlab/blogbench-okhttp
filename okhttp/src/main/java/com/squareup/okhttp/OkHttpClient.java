@@ -57,7 +57,7 @@ public final class OkHttpClient implements URLStreamHandlerFactory {
   private boolean followProtocolRedirects = true;
   private int connectTimeout;
   private int readTimeout;
-
+  
   public OkHttpClient() {
     routeDatabase = new RouteDatabase();
     dispatcher = new Dispatcher();
@@ -251,6 +251,14 @@ public final class OkHttpClient implements URLStreamHandlerFactory {
   public ConnectionPool getConnectionPool() {
     return connectionPool;
   }
+  
+  public int getSpdyCount(){
+	  if(connectionPool != null){
+		  return connectionPool.getSpdyConnectionCount();
+	  }
+	  System.out.println("connection pool is null");
+	  return 0;
+  }
 
   /**
    * Configure this client to follow redirects from HTTPS to HTTP and from HTTP
@@ -406,4 +414,6 @@ public final class OkHttpClient implements URLStreamHandlerFactory {
       }
     };
   }
+
+  
 }
