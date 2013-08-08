@@ -1,5 +1,6 @@
-package com.squareup.okhttp.guide;
+package test;
 
+import com.squareup.okhttp.Connection;
 import com.squareup.okhttp.OkHttpClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,7 +12,9 @@ public class GetExample {
   OkHttpClient client = new OkHttpClient();
 
   void run() throws IOException {
-    String result = get(new URL("https://raw.github.com/square/okhttp/master/README.md"));
+	Connection.forceSPDY();
+//    String result = get(new URL("http://nimbus.seas.gwu.edu"));
+	String result = get(new URL("https://ubuntu/samplewebapp/home.html"));
     System.out.println(result);
   }
 
@@ -21,6 +24,11 @@ public class GetExample {
     try {
       // Read the response.
       in = connection.getInputStream();
+      int h = 0;
+		while(connection.getHeaderField(h) != null){
+			System.out.println(connection.getHeaderField(h));
+			h++;
+		}
       byte[] response = readFully(in);
       return new String(response, "UTF-8");
     } finally {
@@ -41,3 +49,4 @@ public class GetExample {
     new GetExample().run();
   }
 }
+ 
